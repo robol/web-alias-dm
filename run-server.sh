@@ -17,6 +17,6 @@ if [ ! -x environment/bin/gunicorn ]; then
   environment/bin/pip3 install -r requirements.txt
 fi
 
-environment/bin/gunicorn -w 1 'web_alias:app'
+environment/bin/gunicorn -b '0.0.0.0:8000' -w 1 'web_alias:app'
 
 

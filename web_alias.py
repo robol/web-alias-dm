@@ -5,17 +5,11 @@ import json, os, subprocess, requests
 # Parse default options from the environment
 conf_file = os.getenv('NGINX_ALIAS_FILE', '/etc/nginx/unipi-alias.conf')
 security_key = os.getenv('SECURITY_KEY', None)
-alias_url = os.getenv('ALIAS_URL', None)
+alias_url = os.getenv('ALIAS_URL', 'https://manage.dm.unipi.it/api/v0/url')
 reload_command = os.getenv('RELOAD_COMMAND', "systemctl reload nginx")
+token = os.getenv('TOKEN', None)
 
 app = Flask(__name__)
-
-sample_json = """
-[
-    { "alias": "leonardo.robol",   "destination": "public_html", "owner": "a019485" }, 
-    { "alias": "paolini", "destination": "public_html", "owner": "a031549" }
-]
-"""
 
 alias_template = """
 location /{ALIASNAME} {
@@ -56,10 +50,11 @@ def format_alias(entry):
 @app.route("/alias/reload")
 def reload_alias():
     try:
-        if alias_url is None:
-            aliases = json.loads(sample_json)
-        else:
-            aliases = requests.get(alias_url).json()
+        headers = {}
+        if token is not None:
+            headers['Authorization'] = 'Bearer ' + token
+        aliases = requests.get(alias_url, headers = headers).json()
+        aliases = aliases['data']
     except:
         return jsonify({
             "error": f"Could not load new aliases from {alias_url}"

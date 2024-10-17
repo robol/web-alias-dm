@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from datetime import datetime, timezone
-import json, os, subprocess, requests
+import json, os, subprocess, requests, re
 
 # Parse default options from the environment
 conf_file = os.getenv('NGINX_ALIAS_FILE', '/etc/nginx/unipi-alias.conf')
@@ -40,6 +40,9 @@ def index():
     """
 
 def format_alias(entry):
+    if not validate_path(entry['alias']) or not validate_path(entry["destination"]):
+        return ""
+
     return alias_template.replace(
         '{ALIASNAME}', entry["alias"]
     ).replace(
@@ -47,6 +50,12 @@ def format_alias(entry):
     ).replace(
         '{DESTINATION}', entry["destination"]
     )
+
+def validate_path(path):
+    if '..' in path:
+        return False
+
+    return re.match('^[a-zA-Z_0-9/.-]*$', path)
 
 @app.route("/alias/reload")
 def reload_alias():
@@ -59,14 +68,14 @@ def reload_alias():
     except:
         return jsonify({
             "error": f"Could not load new aliases from {alias_url}"
-        })
+        }), 500
     
     try:
         alias_block = "\n".join(map(format_alias, aliases))
     except:
         return jsonify({
             "error": "An error occurred while formatting the alias file, aborting"
-        })
+        }), 500
     
     try:
         with open(conf_file, "w") as h:
@@ -81,14 +90,14 @@ def reload_alias():
     except:
         return jsonify({
             "error": "An error occurred while writing the configuration file, aborting"
-        })
+        }), 500
     
     # Try reloading the web server
     p = subprocess.Popen(reload_command, shell = True)
     if p.wait() != 0:
         return jsonify({
             "error": "An error occurred while reloading the webserver"
-        })
+        }), 500
 
     return jsonify({
         "success": True

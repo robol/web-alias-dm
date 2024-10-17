@@ -51,10 +51,10 @@ def format_alias(entry):
     )
 
 def validate_path(path):
-    if '/' in path or '..' in path:
+    if '..' in path:
         return False
 
-    return re.match('^[a-zA-Z_0-9-]*$', path)
+    return re.match('^[a-zA-Z_0-9/.-]*$', path)
 
 @app.route("/alias/reload")
 def reload_alias():

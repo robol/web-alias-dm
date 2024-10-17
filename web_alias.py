@@ -14,6 +14,7 @@ app = Flask(__name__)
 alias_template = """
 location /{ALIASNAME} {
     alias /home/unipi/{OWNER}/{DESTINATION};
+    try_files $uri $uri/ $uri.html =404;
 }
 """
 
@@ -73,7 +74,7 @@ def reload_alias():
             h.write(f"""
 # This file has been automatically generated.
 # 
-# Script: {__file__}
+# Script: {__file__}    
 # Generated on: {generated_date} UTC
 """)
             h.write(alias_block)

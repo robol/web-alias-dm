@@ -10,7 +10,7 @@ Environment="RELOAD_COMMAND=systemctl reload nginx"
 Environment="LIST_URL=https://manage.dm.unipi.it/api/v0/public/urls"
 Environment="LIST_FILE=/var/www/html/index.html"
 WorkingDirectory=/root/web-alias-dm
-ExecStart=/root/web-alias-dm/environment/bin/gunicorn -w 1 --threads 1 -b 0.0.0.0:8000 'web_alias:app'
+ExecStart=/root/web-alias-dm/environment/bin/gunicorn -w 1 --threads 1 --access-logfile - -b 0.0.0.0:8000 'web_alias:app'
 Restart=always
 RestartSec=3
 

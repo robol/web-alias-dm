@@ -1,11 +1,13 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from datetime import datetime, timezone
 import json, os, subprocess, requests, re
 
 # Parse default options from the environment
 conf_file = os.getenv('NGINX_ALIAS_FILE', '/etc/nginx/unipi-alias.conf')
+userlist_file = os.getenv('LIST_FILE', '/var/www/html/index.html')
 security_key = os.getenv('SECURITY_KEY', None)
 alias_url = os.getenv('ALIAS_URL', 'https://manage.dm.unipi.it/api/v0/url')
+list_url = os.getenv('LIST_URL', 'https://manage.dm.unipi.it/api/v0/public/urls')
 reload_command = os.getenv('RELOAD_COMMAND', "systemctl reload nginx")
 token = os.getenv('TOKEN', None)
 
@@ -57,6 +59,16 @@ def validate_path(path):
 
     return re.match('^[a-zA-Z_0-9/.-]*$', path)
 
+def generate_user_list():
+    template = userlist()
+    with open(userlist_file, "w") as h:
+        h.write(template)
+
+@app.route('/list')
+def userlist():
+    r = requests.get(list_url).json()
+    return render_template("userlist.html", alias = r['data'])
+
 @app.route("/alias/reload")
 def reload_alias():
     try:
@@ -97,6 +109,14 @@ def reload_alias():
     if p.wait() != 0:
         return jsonify({
             "error": "An error occurred while reloading the webserver"
+        }), 500
+    
+    # If everything was successful, we generate the list of users in the home-page.
+    try:
+        generate_user_list()
+    except:
+        return jsonify({
+            "error": "An error occurred while generating the user list"
         }), 500
 
     return jsonify({

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <h1>Web server &mdash; Dipartimento di Matematica, Universit&agrave; di Pisa</h1>
+        Su questo server sono disponibili i seguenti siti web:
+        <ul>
+        {% for a in alias %}
+          <li><a href="https://web.dm.unipi.it/{{ a['alias'] }}/">{{ a['alias'] }} (https://web.dm.unipi.it/{{ a['alias'] }}/)</a></li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>

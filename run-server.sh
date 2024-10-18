@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # File to be saved. Default: /etc/nginx/unipi-alias.conf
-export NGINX_ALIAS_FILE="/etc/nginx/unipi-alias.conf"
+export NGINX_ALIAS_FILE="./unipi-alias.conf"
 
 # Optional, if set it is checked in the Authorization: header
 # export SECURITY_KEY=""

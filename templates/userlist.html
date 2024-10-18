@@ -31,12 +31,19 @@
         <a href="https://www.unipi.it/">University of Pisa</a></p>
         <div class="row">
             {% for a in alias %}
-            <div class="col-xl-3 col-md-6 p-1">
+            <div class="col-xl-4 col-md-6 p-1">
                 <div class="shadow card">
                     <div class="card-body d-flex justify-content-between">
                         <div>
                             <h5 class="card-title">{{ a['alias'] }}</h5>
                             <p class="card-text text-muted small">https://web.dm.unipi.it/{{ a['alias'] }}/</p>
+                            <p>
+                                {% if a['title'] %}
+                                    {{ a['title'] }}
+                                {% else %}
+                                    <span class="text-muted">No description provided</span>
+                                {% endif %}
+                            </p>
                         </div>
                         <div>
                             <a href="https://web.dm.unipi.it/{{ a['alias'] }}/" class="btn btn-primary btn-sm">Visit</a>
@@ -45,6 +52,7 @@
                 </div>
             </div>
             {% endfor %}
+
         </div>
     </main>
   </body>

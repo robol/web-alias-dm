@@ -75,7 +75,7 @@ def generate_user_list():
 @app.route('/list')
 def userlist():
     r = requests.get(list_url).json()
-    return render_template("userlist.html", alias = r['data'])
+    return render_template("userlist.html", alias = sorted(r['data'], key = lambda x : x['alias']))
 
 @app.route("/alias/reload")
 def reload_alias():

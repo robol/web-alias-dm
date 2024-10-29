@@ -15,6 +15,12 @@ export TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # Command to reload the nginx server. Default: systemctl reload nginx
 export RELOAD_COMMAND="systemctl reload nginx"
 
+# URL for the API that returns the list of websites that should appear in the index
+export LIST_URL="https://manage.dm.unipi.it/api/v0/public/urls"
+
+# File generated as index; usually the root of the webserver
+export LIST_FILE="/var/www/html/index.html"
+
 if [ ! -x environment/bin/gunicorn ]; then
   python3 -mvenv environment
   environment/bin/pip3 install -r requirements.txt

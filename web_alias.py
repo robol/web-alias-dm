@@ -17,6 +17,14 @@ alias_template = """
 location /{ALIASNAME} {
     alias /home/unipi/{OWNER}/{DESTINATION};
     try_files $uri $uri/ $uri.html =404;
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_split_path_info ^/{ALIASNAME}(.+\.php)(.*);
+        # This line is here to fix the path handling for the alias above
+        fastcgi_param  SCRIPT_FILENAME    /home/unipi/{OWNER}/{DESTINATION}/$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+    }
 }
 """
 

@@ -17,6 +17,7 @@ alias_template = """
 location /{ALIASNAME} {
     alias /home/unipi/{OWNER}/{DESTINATION};
     try_files $uri $uri/ $uri.html =404;
+    expires 300;
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
